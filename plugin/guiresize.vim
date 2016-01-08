@@ -20,7 +20,7 @@ func s:CountSplits(dir)
 
 	let cmd = a:dir == 'v' ? 'k' : 'h'
 	let n = 0
-	let prevwin = 0
+	let prevwin = winnr()
 	" py3 logging.info('dir = {}, cmd = {}, currwin = {}'.format(vim.eval('a:dir'), vim.eval('cmd'), vim.eval('currwin')))
 	while 1
 		exe 'noautocmd wincmd '.cmd
@@ -59,7 +59,7 @@ func s:ResizeGui()
 	let columns = min([g:guiresize_columns_max, g:guiresize_columns_initial + float2nr(round(g:guiresize_columns_initial * horzsplits / 2))])
 	let lines = min([g:guiresize_lines_max, g:guiresize_lines_initial + float2nr(round(g:guiresize_lines_initial * vertsplits / 2))])
 
-	" py3 logging.info('horzsplits = {}, vertsplits = {}, columns = {}, lines = {}'.format(vim.eval('horzsplits'), vim.eval('vertsplits'), vim.eval('columns'), vim.eval('lines')))
+	py3 logging.info('horzsplits = {}, vertsplits = {}, columns = {}, lines = {}'.format(vim.eval('horzsplits'), vim.eval('vertsplits'), vim.eval('columns'), vim.eval('lines')))
 
 	if columns != &columns || lines != &lines
 		exe 'set columns='.columns.' lines='.lines
