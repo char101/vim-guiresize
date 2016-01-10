@@ -9,6 +9,10 @@ let g:guiresize_wincount = 0
 let g:guiresize_lines_max = 1000
 let g:guiresize_columns_max = 1000
 
+" how many columns/lines to add when splitting
+let g:guiresize_columns_split = 80
+let g:guiresize_lines_split = 10
+
 func s:CountSplits()
 	" only 1 window
 	if winnr('$') == 1
@@ -44,8 +48,8 @@ func s:ResizeGui()
 
 	let splits = s:CountSplits()
 
-	let columns = min([g:guiresize_columns_max, g:guiresize_columns_initial + float2nr(round(g:guiresize_columns_initial * splits['h'] / 2))])
-	let lines = min([g:guiresize_lines_max, g:guiresize_lines_initial + float2nr(round(g:guiresize_lines_initial * splits['v'] / 2))])
+	let columns = min([g:guiresize_columns_max, g:guiresize_columns_initial + float2nr(round(g:guiresize_columns_split * splits['h']))])
+	let lines = min([g:guiresize_lines_max, g:guiresize_lines_initial + float2nr(round(g:guiresize_lines_split * splits['v']))])
 
 	" py3 logging.info('horzsplits = {}, vertsplits = {}, columns = {}, lines = {}'.format(vim.eval('splits["h"]'), vim.eval('splits["v"]'), vim.eval('columns'), vim.eval('lines')))
 
@@ -80,6 +84,9 @@ func s:VimResized()
 	endif
 	" resizing is disabled if vim is resized while having splits
 	let g:guiresize_disabled = splits['h'] || splits['v']
+
+	" align windows
+	wincmd =
 endf
 
 func s:WinEnter()
