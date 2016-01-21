@@ -42,7 +42,7 @@ func s:CountSplits()
 endf
 
 func s:ResizeGui()
-	if g:guiresize_disabled
+	if g:guiresize_disabled || s:IsMaximized()
 		return
 	endif
 
@@ -75,6 +75,13 @@ func s:GUIEnter()
 endf
 
 func s:VimResized()
+	" align windows
+	wincmd =
+
+	if s:IsMaximized()
+		return
+	endif
+
 	let splits = s:CountSplits()
 	if splits['h'] == 0
 		let g:guiresize_columns_initial = &columns
@@ -82,11 +89,9 @@ func s:VimResized()
 	if splits['v'] == 0
 		let g:guiresize_lines_initial = &lines
 	endif
+
 	" resizing is disabled if vim is resized while having splits
 	let g:guiresize_disabled = splits['h'] || splits['v']
-
-	" align windows
-	wincmd =
 endf
 
 func s:WinEnter()
@@ -101,6 +106,16 @@ func s:WinLeave()
 	let g:guiresize_wincount = winnr('$')
 endf
 
+func s:IsMaximized()
+	py3 << END
+from win32gui import GetActiveWindow, GetWindowLong
+hwnd = GetActiveWindow()
+styles = GetWindowLong(hwnd, -16)
+is_maximized = 1 if styles & 0x01000000 else 0
+vim.command('let isMax = {}'.format(is_maximized))
+END
+	return isMax
+endf
 
 autocmd GUIEnter   * call s:GUIEnter()
 autocmd VimResized * call s:VimResized()
